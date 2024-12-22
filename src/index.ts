@@ -5,6 +5,7 @@ import express, { Request, Response, json } from 'express';
 import http from 'http';
 import cookieParser from 'cookie-parser';
 import dotenv from 'dotenv';
+import cors from 'cors';
 import { authSchema } from './graphql/schema/auth';
 import { userSchema } from './graphql/schema/user';
 import { authResolvers } from './graphql/resolvers/auth';
@@ -14,6 +15,8 @@ dotenv.config();
 
 const app = express();
 const httpServer = http.createServer(app);
+
+app.use(cors());
 
 const server = new ApolloServer({
   typeDefs: [authSchema, userSchema],
