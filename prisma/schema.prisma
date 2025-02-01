@@ -22,5 +22,5 @@ model RefreshToken {
   userId    String   @db.Uuid
   createdAt DateTime @default(now())
   expiresAt DateTime
-  user      User     @relation(fields: [userId], references: [id])
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
