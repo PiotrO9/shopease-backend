@@ -29,11 +29,12 @@ model Product {
   id          String           @id @default(uuid()) @db.Uuid
   name        String
   description String?
-  categoryId  Int?             
+  categoryId  Int?
   brand       String?
   createdAt   DateTime         @default(now())
   updatedAt   DateTime         @updatedAt
   variants    ProductVariant[]
+  category    Category?        @relation(fields: [categoryId], references: [id])
 }
 
 model ProductVariant {
@@ -47,4 +48,13 @@ model ProductVariant {
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
   product    Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+}
+
+model Category {
+  id       Int         @id @default(autoincrement())
+  name     String
+  parentId Int?
+  parent   Category?   @relation("CategoryHierarchy", fields: [parentId], references: [id])
+  children Category[]  @relation("CategoryHierarchy")
+  products Product[]
 }
