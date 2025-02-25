@@ -29,7 +29,7 @@ model Product {
   id          String           @id @default(uuid()) @db.Uuid
   name        String
   description String?
-  categoryId  Int?
+  categoryId  String?          @db.Uuid
   brand       String?
   createdAt   DateTime         @default(now())
   updatedAt   DateTime         @updatedAt
@@ -51,9 +51,9 @@ model ProductVariant {
 }
 
 model Category {
-  id       Int         @id @default(autoincrement())
+  id       String         @id @default(uuid()) @db.Uuid
   name     String
-  parentId Int?
+  parentId String?        @db.Uuid
   parent   Category?   @relation("CategoryHierarchy", fields: [parentId], references: [id])
   children Category[]  @relation("CategoryHierarchy")
   products Product[]
