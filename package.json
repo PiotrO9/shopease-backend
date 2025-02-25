@@ -13,6 +13,7 @@
   "description": "",
   "dependencies": {
     "@apollo/server": "^4.11.2",
+    "@faker-js/faker": "^9.5.0",
     "@prisma/client": "^6.4.0",
     "bcrypt": "^5.1.1",
     "cookie-parser": "^1.4.7",
