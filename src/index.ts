@@ -10,6 +10,7 @@ import { authSchema } from './graphql/schema/auth';
 import { userSchema } from './graphql/schema/user';
 import { authResolvers } from './graphql/resolvers/auth';
 import { userResolvers } from './graphql/resolvers/user';
+import { seeder } from './seeder/seeder';
 
 dotenv.config();
 
@@ -40,6 +41,16 @@ async function startServer() {
 		},
 		})
 	);
+
+	app.post('/seed', async (req: Request, res: Response) => {
+		try {
+		  await seeder();
+		  res.status(200).json({ message: 'Database seeded successfully' });
+		} catch (error: any) {
+		  console.error('Error seeding database:', error);
+		  res.status(500).json({ error: 'Database seeding failed', details: error.message });
+		}
+	  });
 
 	httpServer.listen(4000, () => {
 		console.log('🚀 Server ready at http://localhost:4000/graphql');
