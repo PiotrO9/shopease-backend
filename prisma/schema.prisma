@@ -40,7 +40,8 @@ model Product {
 model ProductVariant {
   id         String   @id @default(uuid()) @db.Uuid
   productId  String   @db.Uuid
-  color      String
+  image      String? 
+  variant    String?
   size       String?
   sku        String   @unique
   price      Float?

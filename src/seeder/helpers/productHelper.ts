@@ -35,11 +35,12 @@ export async function seedProductsAndVariants(categories: Array<{ id: string; na
                 await prisma.productVariant.create({
                     data: {
                         productId: product.id,
-                        color: color,
+                        variant: color,
                         size: size,
                         sku: sku,
                         price: price,
-                        inventory: inventory
+                        inventory: inventory,
+						image: faker.image.urlPicsumPhotos({ width: 400, height: 400, blur: 0, grayscale: false }),
                     }
                 });
             }
