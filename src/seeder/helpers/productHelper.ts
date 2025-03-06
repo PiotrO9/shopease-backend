@@ -1,78 +1,110 @@
 import { PrismaClient } from '@prisma/client';
-import { faker } from '@faker-js/faker';
 
 const prisma = new PrismaClient();
 
-const sizes = ['XS', 'S', 'M', 'L', 'XL'];
+const sizes = ["XS", "S", "M", "L", "XL"];
 
-function generateSKU(productName: string, color: string, size: string): string {
-    const abbreviate = (str: string, length: number): string => {
-        return str.replace(/[^A-Za-z0-9]/g, '').toUpperCase().substring(0, length);
-    };
+const products = [
+    {
+        name: "Basic T-Shirt",
+        categoryPath: ["Men Clothing", "Shirts", "Casual Shirts"],
+        variants: [
+            { name: "Red", baseSku: "TSH-SRT-0001", image: "https://i.postimg.cc/x8LkK7Tb/TSH-SRT-0001.webp" },
+            { name: "Black", baseSku: "TSH-SRT-0002", image: "https://i.postimg.cc/59zFdHqN/TSH-SRT-0002.webp" },
+            { name: "White", baseSku: "TSH-SRT-0003", image: "https://i.postimg.cc/WbPq22Xm/TSH-SRT-0003.webp" },
+            { name: "Brown", baseSku: "TSH-SRT-0004", image: "https://i.postimg.cc/DydJ0tM9/TSH-SRT-0004.webp" }
+        ]
+    },
+    {
+        name: "Classic Coat",
+        categoryPath: ["Men Clothing", "Jackets", "Windbreakers"],
+        variants: [
+            { name: "Beige", baseSku: "COT-JCK-0001", image: "https://i.postimg.cc/RFsJSfpN/COT-JCK-0001.webp" }
+        ]
+    },
+    {
+        name: "Slim Fit Chinos",
+        categoryPath: ["Men Clothing", "Pants", "Chinos"],
+        variants: [
+            { name: "Beige", baseSku: "PNT-CHN-0001", image: "https://i.postimg.cc/26K3RY3W/PNT-CHN-0001.webp" }
+        ]
+    },
+    {
+        name: "Formal Leather Shoes",
+        categoryPath: ["Accessories", "Shoes"],
+        variants: [
+            { name: "Brown", baseSku: "SHO-DRS-0003", image: "https://i.postimg.cc/cCtCdz8b/SHO-DRS-0003.webp" },
+            { name: "Gray", baseSku: "SHO-DRS-0004", image: "https://i.postimg.cc/WtR3z7Gb/SHO-DRS-0004.webp" }
+        ]
+    },
+    {
+        name: "Sneakers",
+        categoryPath: ["Accessories", "Shoes"],
+        variants: [
+            { name: "White", baseSku: "SHO-TRN-0001", image: "https://i.postimg.cc/7Zn3vC4T/SHO-TRN-0001.webp" },
+            { name: "Brown", baseSku: "SHO-TRN-0002", image: "https://i.postimg.cc/mrd7D0tL/SHO-TRN-0002.webp" }
+        ]
+    },
+    {
+        name: "Ankle Socks",
+        categoryPath: ["Accessories", "Hats"], // Example, can be adjusted
+        variants: [
+            { name: "Gray", baseSku: "SOC-ANK-0004", image: "https://i.postimg.cc/Qtw5g1Qv/SOC-ANK-0004.webp" },
+            { name: "Black", baseSku: "SOC-ANK-0005", image: "https://i.postimg.cc/sfG5jHyz/SOC-ANK-0005.webp" },
+            { name: "Beige", baseSku: "SOC-ANK-0006", image: "https://i.postimg.cc/bNXks0Nt/SOC-ANK-0006.webp" }
+        ]
+    },
+    {
+        name: "Regular Socks",
+        categoryPath: ["Accessories", "Hats"], // Example, can be adjusted
+        variants: [
+            { name: "White", baseSku: "SOC-REG-0001", image: "https://i.postimg.cc/nLLQ60T6/SOC-REG-0001.webp" },
+            { name: "Black", baseSku: "SOC-REG-0002", image: "https://i.postimg.cc/bvF28kBd/SOC-REG-0002.webp" }
+        ]
+    }
+];
 
-    const nameAbbrev = abbreviate(productName, 3);
-    const colorAbbrev = abbreviate(color, 3);
-    const sizeAbbrev = abbreviate(size, 2);
-    const randomNum = faker.number.int({ min: 100, max: 999 });
+async function findCategoryId(categories: any[], path: string[]): Promise<string | null> {
+    let currentCategories = categories;
+    let foundCategory = null;
 
-    return `${nameAbbrev}-${colorAbbrev}-${sizeAbbrev}-${randomNum}`;
+    for (const categoryName of path) {
+        foundCategory = currentCategories.find(c => c.name === categoryName);
+        if (!foundCategory) return null;
+        currentCategories = foundCategory.children || [];
+    }
+
+    return foundCategory.id;
 }
 
-function collectLeafCategories(category: any): Array<{ id: string; name: string }> {
-    if (!category.children || category.children.length === 0) {
-        return [{ id: category.id, name: category.name }];
-    }
+export default async function seedProductsAndVariants(categories: any[]) {
+    for (const product of products) {
+        const categoryId = await findCategoryId(categories, product.categoryPath);
+        if (!categoryId) {
+            console.error(`Category not found for ${product.name}`);
+            continue;
+        }
 
-    let leaves: Array<{ id: string; name: string }> = [];
+        const createdProduct = await prisma.product.create({
+            data: {
+                name: product.name,
+                description: `A high-quality ${product.name.toLowerCase()}, perfect for any occasion.`,
+                brand: "FashionPro",
+                categoryId: categoryId
+            }
+        });
 
-    for (const child of category.children) {
-        leaves = leaves.concat(collectLeafCategories(child));
-    }
-	
-    return leaves;
-}
-
-export async function seedProductsAndVariants(categories: Array<{ id: string; name: string; children?: any[] }>) {
-    let leafCategories: Array<{ id: string; name: string }> = [];
-
-    for (const cat of categories) {
-        leafCategories = leafCategories.concat(collectLeafCategories(cat));
-    }
-
-    for (const category of leafCategories) {
-        const amountOfProductsInCategory = faker.number.int({ min: 4, max: 8 });
-
-        for (let i = 0; i < amountOfProductsInCategory; i++) {
-            const productName = faker.commerce.productName();
-            const productDescription = faker.commerce.productDescription();
-            const brand = faker.company.name();
-            const product = await prisma.product.create({
-                data: {
-                    name: productName,
-                    description: productDescription,
-                    brand: brand,
-                    categoryId: category.id
-                }
-            });
-
-            const numVariants = faker.number.int({ min: 1, max: 4 });
-			
-            for (let j = 0; j < numVariants; j++) {
-                const color = faker.color.human();
-                const size = faker.helpers.arrayElement(sizes);
-                const sku = generateSKU(productName, color, size);
-                const price = parseFloat(faker.commerce.price({ min: 10, max: 200 }));
-                const inventory = faker.number.int({ min: 0, max: 100 });
-
+        for (const variant of product.variants) {
+            for (const size of sizes) {
                 await prisma.productVariant.create({
                     data: {
-                        productId: product.id,
-                        variant: color,
+                        productId: createdProduct.id,
+                        variant: `${variant.name} - ${size}`,
                         size: size,
-                        sku: sku,
-                        price: price,
-                        inventory: inventory,
-                        image: faker.image.urlPicsumPhotos({ width: 400, height: 400, blur: 0, grayscale: false })
+                        sku: `${variant.baseSku}-${size}`,
+                        price: parseFloat((Math.random() * (150 - 20) + 20).toFixed(2)), // Random price between 20-150
+                        inventory: Math.floor(Math.random() * 50), // Random inventory between 0-50
+                        image: variant.image
                     }
                 });
             }

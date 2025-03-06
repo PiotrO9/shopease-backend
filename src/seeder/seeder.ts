@@ -1,6 +1,6 @@
 import { PrismaClient } from '@prisma/client';
 import { seedCategories } from './helpers/categoriesHelper';
-import { seedProductsAndVariants } from './helpers/productHelper';
+import seedProductsAndVariants from './helpers/productHelper';
 
 const prisma = new PrismaClient();
 
