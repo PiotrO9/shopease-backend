@@ -54,6 +54,7 @@ model ProductVariant {
 model Category {
   id       String         @id @default(uuid()) @db.Uuid
   name     String
+  image    String?
   parentId String?        @db.Uuid
   parent   Category?   @relation("CategoryHierarchy", fields: [parentId], references: [id])
   children Category[]  @relation("CategoryHierarchy")

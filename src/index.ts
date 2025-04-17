@@ -9,9 +9,11 @@ import cors from 'cors';
 import { authSchema } from './graphql/schema/auth';
 import { userSchema } from './graphql/schema/user';
 import { productSchema } from './graphql/schema/product';
+import { categorySchema } from './graphql/schema/category';
 import { authResolvers } from './graphql/resolvers/auth';
 import { userResolvers } from './graphql/resolvers/user';
 import { productResolvers } from './graphql/resolvers/product';
+import { categoryResolvers } from './graphql/resolvers/category';
 import { seeder } from './seeder/seeder';
 
 dotenv.config();
@@ -22,8 +24,8 @@ const httpServer = http.createServer(app);
 app.use(cors());
 
 const server = new ApolloServer({
-  typeDefs: [authSchema, userSchema, productSchema],
-  resolvers: [authResolvers, userResolvers, productResolvers],
+  typeDefs: [authSchema, userSchema, productSchema, categorySchema],
+  resolvers: [authResolvers, userResolvers, productResolvers, categoryResolvers],
   plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
 });
 
