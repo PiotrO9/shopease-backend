@@ -9,6 +9,11 @@ export const categorySchema = `
         products: [Product!]!
     }
 
+    type SubcategoriesResult {
+        categories: [Category!]!
+        errors: [String!]
+    }
+
     input CategoryWhereInput {
         parentId: StringFilter
     }
@@ -26,5 +31,6 @@ export const categorySchema = `
     type Query {
         categories(where: CategoryWhereInput): [Category!]!
         category(id: String!): Category
+        subcategories(parentIds: [String!]!): SubcategoriesResult!
     }
 `; 
