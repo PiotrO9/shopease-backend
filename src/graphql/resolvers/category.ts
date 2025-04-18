@@ -2,8 +2,11 @@ import prisma from '../prisma/prismaClient';
 
 export const categoryResolvers = {
     Query: {
-        categories: async () => {
+        categories: async (_: any, { where }: { where?: { parentId?: { equals: string } } }) => {
             return prisma.category.findMany({
+                where: where ? {
+                    parentId: where.parentId?.equals || undefined
+                } : undefined,
                 include: {
                     parent: true,
                     children: true,

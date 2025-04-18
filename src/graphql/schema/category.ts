@@ -9,8 +9,22 @@ export const categorySchema = `
         products: [Product!]!
     }
 
+    input CategoryWhereInput {
+        parentId: StringFilter
+    }
+
+    input StringFilter {
+        equals: String
+        not: String
+        in: [String!]
+        notIn: [String!]
+        contains: String
+        startsWith: String
+        endsWith: String
+    }
+
     type Query {
-        categories: [Category!]!
+        categories(where: CategoryWhereInput): [Category!]!
         category(id: String!): Category
     }
 `; 

@@ -5,11 +5,23 @@ const prisma = new PrismaClient();
 export async function seedCategories() {
     const topCategoriesData = [
         {
-            name: 'Men Clothing',
+            name: 'Clothing',
+            image: 'https://i.postimg.cc/V0BFHpwG/category-image-tshirt.webp',
             children: {
                 create: [
                     {
+                        name: 'T-Shirts',
+                        image: 'https://i.postimg.cc/V0BFHpwG/category-image-tshirt.webp',
+                        children: {
+                            create: [
+                                { name: 'Basic T-Shirts' },
+                                { name: 'Graphic T-Shirts' }
+                            ]
+                        }
+                    },
+                    {
                         name: 'Shirts',
+                        image: 'https://i.postimg.cc/jDqMBxLz/category-image-shirt.webp',
                         children: {
                             create: [
                                 { name: 'Casual Shirts' },
@@ -19,6 +31,7 @@ export async function seedCategories() {
                     },
                     {
                         name: 'Pants',
+                        image: 'https://i.postimg.cc/3ydnJtjN/category-image-pants.webp',
                         children: {
                             create: [
                                 { name: 'Jeans' },
@@ -28,44 +41,21 @@ export async function seedCategories() {
                     },
                     {
                         name: 'Jackets',
+                        image: 'https://i.postimg.cc/FYPT4MLw/category-image-jacket.webp',
                         children: {
                             create: [
                                 { name: 'Leather Jackets' },
                                 { name: 'Windbreakers' }
                             ]
                         }
-                    }
-                ]
-            }
-        },
-        {
-            name: 'Women Clothing',
-            children: {
-                create: [
-                    {
-                        name: 'Dresses',
-                        children: {
-                            create: [
-                                { name: 'Evening Dresses' },
-                                { name: 'Casual Dresses' }
-                            ]
-                        }
                     },
                     {
-                        name: 'Tops',
+                        name: 'Hoodies',
+                        image: 'https://i.postimg.cc/QBwSBcSb/category-image-hoodie.webp',
                         children: {
                             create: [
-                                { name: 'Blouses' },
-                                { name: 'T-Shirts' }
-                            ]
-                        }
-                    },
-                    {
-                        name: 'Skirts',
-                        children: {
-                            create: [
-                                { name: 'Mini Skirts' },
-                                { name: 'Long Skirts' }
+                                { name: 'Pullover Hoodies' },
+                                { name: 'Zip-up Hoodies' }
                             ]
                         }
                     }
@@ -74,32 +64,44 @@ export async function seedCategories() {
         },
         {
             name: 'Accessories',
+            image: 'https://i.postimg.cc/vgnh5DNd/category-image-watches.webp',
             children: {
                 create: [
                     {
-                        name: 'Bags',
+                        name: 'Watches',
+                        image: 'https://i.postimg.cc/vgnh5DNd/category-image-watches.webp',
                         children: {
                             create: [
-                                { name: 'Handbags' },
-                                { name: 'Backpacks' }
+                                { name: 'Digital Watches' },
+                                { name: 'Analog Watches' }
                             ]
                         }
                     },
                     {
-                        name: 'Hats',
+                        name: 'Shoes',
+                        image: 'https://i.postimg.cc/sGRcmykG/category-image-shoes.webp',
                         children: {
                             create: [
-                                { name: 'Baseball Caps' },
-                                { name: 'Beanies' }
+                                { name: 'Casual Shoes' },
+                                { name: 'Sports Shoes' }
                             ]
                         }
-                    },
+                    }
+                ]
+            }
+        },
+        {
+            name: 'Home & Kitchen',
+            image: 'https://i.postimg.cc/crBDDg4x/category-image-cups.webp',
+            children: {
+                create: [
                     {
-                        name: 'Jewelry',
+                        name: 'Cups & Mugs',
+                        image: 'https://i.postimg.cc/crBDDg4x/category-image-cups.webp',
                         children: {
                             create: [
-                                { name: 'Necklaces' },
-                                { name: 'Bracelets' }
+                                { name: 'Coffee Mugs' },
+                                { name: 'Tea Cups' }
                             ]
                         }
                     }
