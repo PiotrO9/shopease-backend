@@ -8,6 +8,7 @@ export const seeder = async () => {
     console.log('Clearing database...');
 
     await prisma.refreshToken.deleteMany();
+    await prisma.price.deleteMany();
     await prisma.productVariant.deleteMany();
     await prisma.product.deleteMany();
     await prisma.category.deleteMany();

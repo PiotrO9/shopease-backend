@@ -6,7 +6,7 @@ export const productSchema = `
         variant: String
         size: String
         sku: String!
-        price: Float
+        price: Price
         inventory: Int
         createdAt: String!
         updatedAt: String!
@@ -21,6 +21,25 @@ export const productSchema = `
         updatedAt: String!
         variants: [ProductVariant!]!
     }
+
+	type Price {
+		id: String!
+		productVariantId: String!
+		basePrice: Float!
+		salePrice: Float
+		discountType: DiscountType
+		discountValue: Float
+		startDate: String
+		endDate: String
+		isActive: Boolean!
+		createdAt: String!
+		updatedAt: String!
+	}
+
+	enum DiscountType {
+		FIXED
+		PERCENTAGE
+	}
 
     type Query {
         randomProducts(count: Int!): [Product]

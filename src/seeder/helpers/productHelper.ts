@@ -1,4 +1,5 @@
 import { PrismaClient } from '@prisma/client';
+import { createPriceForVariant } from './priceHelper';
 
 const prisma = new PrismaClient();
 
@@ -168,17 +169,18 @@ export default async function seedProductsAndVariants(categories: any[]) {
 
         for (const variant of product.variants) {
             for (const size of sizes) {
-                await prisma.productVariant.create({
+                const createdVariant = await prisma.productVariant.create({
                     data: {
                         productId: createdProduct.id,
                         variant: `${variant.name} - ${size}`,
                         size: size,
                         sku: `${variant.baseSku}-${size}`,
-                        price: parseFloat((Math.random() * (150 - 20) + 20).toFixed(2)), // Random price between 20-150
-                        inventory: Math.floor(Math.random() * 50), // Random inventory between 0-50
+                        inventory: Math.floor(Math.random() * 50),
                         image: variant.image
                     }
                 });
+
+                await createPriceForVariant(createdVariant.id, product.categoryPath);
             }
         }
     }

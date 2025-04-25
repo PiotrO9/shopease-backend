@@ -11,13 +11,35 @@ export const productResolvers = {
                 skip,
                 take: count,
                 include: {
-                    variants: true,
+                    variants: {
+                        include: {
+                            price: true
+                        }
+                    }
                 },
             });
 
             return randomProducts.map(product => ({
                 ...product,
+                createdAt: product.createdAt.toISOString(),
+                updatedAt: product.updatedAt.toISOString(),
                 quantity: product.variants.reduce((acc, variant) => acc + variant.inventory, 0),
+                variants: product.variants.map(variant => ({
+                    ...variant,
+                    createdAt: variant.createdAt.toISOString(),
+                    updatedAt: variant.updatedAt.toISOString(),
+                    price: variant.price ? {
+                        basePrice: variant.price.basePrice,
+                        salePrice: variant.price.salePrice,
+                        discountType: variant.price.discountType,
+                        discountValue: variant.price.discountValue,
+                        startDate: variant.price.startDate?.toISOString(),
+                        endDate: variant.price.endDate?.toISOString(),
+                        isActive: variant.price.isActive,
+                        createdAt: variant.price.createdAt.toISOString(),
+                        updatedAt: variant.price.updatedAt.toISOString()
+                    } : null
+                }))
             }));
         },
     },
