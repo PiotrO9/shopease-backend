@@ -22,6 +22,7 @@ model User {
   updatedAt     DateTime       @updatedAt
   tokens        RefreshToken[]
   addresses     Address[]
+  cart          Cart?
 }
 
 model RefreshToken {
@@ -46,17 +47,33 @@ model Product {
 }
 
 model ProductVariant {
-  id         String   @id @default(uuid()) @db.Uuid
-  productId  String   @db.Uuid
+  id         String     @id @default(uuid()) @db.Uuid
+  productId  String     @db.Uuid
   image      String? 
   variant    String?
   size       String?
-  sku        String   @unique
-  price      Float?
+  sku        String     @unique
   inventory  Int
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-  product    Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+  product    Product    @relation(fields: [productId], references: [id], onDelete: Cascade)
+  cartItems  CartItem[]
+  price      Price?
+}
+
+model Price {
+  id                String         @id @default(uuid()) @db.Uuid
+  productVariantId  String         @db.Uuid @unique
+  basePrice         Float
+  salePrice         Float?
+  discountType      DiscountType?
+  discountValue     Float?
+  startDate         DateTime?
+  endDate           DateTime?
+  isActive          Boolean        @default(true)
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
+  productVariant    ProductVariant @relation(fields: [productVariantId], references: [id], onDelete: Cascade)
 }
 
 model Category {
@@ -83,8 +100,34 @@ model Address {
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
+model Cart {
+  id        String     @id @default(uuid()) @db.Uuid
+  userId    String     @db.Uuid @unique
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  items     CartItem[]
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model CartItem {
+  id              String         @id @default(uuid()) @db.Uuid
+  cartId          String         @db.Uuid
+  productVariantId String        @db.Uuid
+  quantity        Int
+  price           Float
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+  cart            Cart           @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  productVariant  ProductVariant @relation(fields: [productVariantId], references: [id], onDelete: Cascade)
+}
+
 enum UserRole {
   ADMIN
   CUSTOMER
   SELLER
+}
+
+enum DiscountType {
+  FIXED
+  PERCENTAGE
 }
